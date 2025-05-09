@@ -14,7 +14,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import dayjs from "dayjs";
 
-// Type definitions (inchangées)
+// Type definitions
 interface CalendarProps {
   id?: string;
   mode?: "multiple" | "single";
@@ -71,25 +71,26 @@ const equipmentOptions = [
   { id: "audio", label: "Système audio" },
 ];
 
-// Apartment-specific descriptions (inchangées)
+// Apartment-specific descriptions
 const apartmentDescriptions: { [key: string]: string } = {
   "Appartement B":
-    "L'appartement B séduit par sa simplicité soignée et son atmosphère accueillante. Composé de 3 pièces, dont 2 chambres, il propose un cadre de vie équilibré, alliant confort et esthétique. Entièrement équipé et meublé, il offre un environnement convivial, idéal pour un séjour serein au cœur d'Abidjan.",
+    "L&apos;appartement B séduit par sa simplicité soignée et son atmosphère accueillante. Composé de 3 pièces, dont 2 chambres, il propose un cadre de vie équilibré, alliant confort et esthétique. Entièrement équipé et meublé, il offre un environnement convivial, idéal pour un séjour serein au cœur d&apos;Abidjan.",
   "Appartement B23":
-    "Perché au 8e étage de l'immeuble Oumou Sidibé, au cœur de Marcory Zone 4, l'appartement B23 allie confort et sophistication. Composé de 4 pièces dont 3 chambres raffinées, il séduit par son ambiance chaleureuse et sa décoration élégante et épurée. Entièrement équipé, il offre à ses résidents un cadre de vie haut de gamme avec un accès à une salle de sport, une piscine et un parking. Depuis ses larges ouvertures, une vue magnifique sur Abidjan vient sublimer cet espace pensé pour une clientèle exigeante.",
+    "Perché au 8e étage de l&apos;immeuble Oumou Sidibé, au cœur de Marcory Zone 4, l&apos;appartement B23 allie confort et sophistication. Composé de 4 pièces dont 3 chambres raffinées, il séduit par son ambiance chaleureuse et sa décoration élégante et épurée. Entièrement équipé, il offre à ses résidents un cadre de vie haut de gamme avec un accès à une salle de sport, une piscine et un parking. Depuis ses larges ouvertures, une vue magnifique sur Abidjan vient sublimer cet espace pensé pour une clientèle exigeante.",
   "Appartement Pressing":
-    "L'appartement Pressing se distingue par sa simplicité et son ambiance chaleureuse. De taille contenue, il offre un cadre pratique tout en étant doté d'une décoration élégante et sobre. Composé de 2 pièces, dont 1 chambre, il assure confort et fonctionnalité. Entièrement équipé, cet appartement est idéal pour des séjours courts. La qualité de ses équipements et son agencement optimisé vous garantissent une expérience à la fois pratique et élégante.",
+    "L&apos;appartement Pressing se distingue par sa simplicité et son ambiance chaleureuse. De taille contenue, il offre un cadre pratique tout en étant doté d&apos;une décoration élégante et sobre. Composé de 2 pièces, dont 1 chambre, il assure confort et fonctionnalité. Entièrement équipé, cet appartement est idéal pour des séjours courts. La qualité de ses équipements et son agencement optimisé vous garantissent une expérience à la fois pratique et élégante.",
   "Appartement Prima":
-    "Alliant espace et élégance, l'appartement Prima se distingue par son ambiance chaleureuse et sa décoration raffinée. Composé de 2 pièces contenu, il offre un cadre de vie agréable, pensé pour le confort et la sérénité. Entièrement équipé et doté d'un accès à un parking, il bénéficie d'un emplacement stratégique, idéal pour saisir chaque opportunité et profiter d'une grande liberté de mouvement au quotidien.",
+    "Alliant espace et élégance, l&apos;appartement Prima se distingue par son ambiance chaleureuse et sa décoration raffinée. Composé de 2 pièces contenu, il offre un cadre de vie agréable, pensé pour le confort et la sérénité. Entièrement équipé et doté d&apos;un accès à un parking, il bénéficie d&apos;un emplacement stratégique, idéal pour saisir chaque opportunité et profiter d&apos;une grande liberté de mouvement au quotidien.",
   "Appartement Soleil":
-    "Niché au 1e étage de l'immeuble Soleil, cet appartement séduit par son volume généreux et son atmosphère raffinée. Ses larges baies vitrées laissent entrer une lumière naturelle abondante, mettant en valeur une décoration élégante et épurée. Avec ses 4 pièces, dont 3 chambres spacieuses et autonomes, il offre un cadre de vie harmonieux, propice à la sérénité. Entièrement équipé et bénéficiant d'un accès à un parking, il conjugue confort et praticité en plein cœur de Marcory Zone 4.",
+    "Niché au 1e étage de l&apos;immeuble Soleil, cet appartement séduit par son volume généreux et son atmosphère raffinée. Ses larges baies vitrées laissent entrer une lumière naturelle abondante, mettant en valeur une décoration élégante et épurée. Avec ses 4 pièces, dont 3 chambres spacieuses et autonomes, il offre un cadre de vie harmonieux, propice à la sérénité. Entièrement équipé et bénéficiant d&apos;un accès à un parking, il conjugue confort et praticité en plein cœur de Marcory Zone 4.",
   "Complexe Carré Massina":
-    "Situés dans le magnifique complexe Carré Massina, nos appartements de 3 et 4 pièces allient simplicité et chaleur. Avec une décoration élégante et sobre, chaque espace est pensé pour offrir à ses occupants confort et fonctionnalité. Entièrement équipés et meublés, ces appartements vous garantissent efficacité et praticité, tout en vous offrant un cadre de vie à la fois beau et raffiné. Idéalement situés à proximité de l'Aéroport Félix Houphouët-Boigny, ils sont parfaits pour les voyages d'affaires ou les déplacements, offrant un environnement calme et élégant.",
+    "Situés dans le magnifique complexe Carré Massina, nos appartements de 3 et 4 pièces allient simplicité et chaleur. Avec une décoration élégante et sobre, chaque espace est pensé pour offrir à ses occupants confort et fonctionnalité. Entièrement équipés et meublés, ces appartements vous garantissent efficacité et praticité, tout en vous offrant un cadre de vie à la fois beau et raffiné. Idéalement situés à proximité de l&apos;Aéroport Félix Houphouët-Boigny, ils sont parfaits pour les voyages d'affaires ou les déplacements, offrant un environnement calme et élégant.",
 };
 
-// Composant pour les détails de l'appartement (inchangé)
+// Composant pour les détails de l'appartement
 function ApartmentDetails({ formRef }: { formRef: React.RefObject<HTMLFormElement> }) {
   const searchParams = useSearchParams();
+  const router = useRouter(); // Ajout de useRouter pour rediriger si nécessaire
   const apartment = searchParams.get("apartment");
   const selectedApartmentImage = [...mainProperties, ...otherProperties].find(
     (prop) => prop.apartment === apartment
@@ -98,13 +99,16 @@ function ApartmentDetails({ formRef }: { formRef: React.RefObject<HTMLFormElemen
   useEffect(() => {
     if (apartment && formRef.current) {
       formRef.current.scrollIntoView({ behavior: "smooth" });
+    } else if (!apartment) {
+      router.push("/"); // Redirige vers la page d'accueil si aucun apartment n'est spécifié
     }
-  }, [apartment, formRef]);
+  }, [apartment, formRef, router]);
 
   if (!apartment || !selectedApartmentImage) {
-    return null;
+    return null; // Retourne null si l'appartement n'est pas trouvé
   }
 
+  // Afficher uniquement l'image pour les salles de conférence
   if (apartment === "Salles de conf") {
     return (
       <div className="max-w-5xl mx-auto mt-6 mb-8">
@@ -120,6 +124,7 @@ function ApartmentDetails({ formRef }: { formRef: React.RefObject<HTMLFormElemen
     );
   }
 
+  // Afficher l'image et la description pour les appartements
   return (
     <div className="max-w-5xl mx-auto mt-6 mb-8">
       <div className="flex flex-col md:flex-row gap-6">
@@ -145,7 +150,7 @@ function ApartmentDetails({ formRef }: { formRef: React.RefObject<HTMLFormElemen
   );
 }
 
-// Composant pour le formulaire des salles de conférence (inchangé)
+// Composant pour le formulaire des salles de conférence
 function ConferenceReservationForm({
   hotel,
   apartment,
@@ -347,7 +352,7 @@ function ConferenceReservationForm({
             <CardHeader>
               <CardTitle className="text-2xl text-amber-800 flex items-center">
                 <Users className="h-6 w-6 mr-2" />
-                Information sur le client
+               Information sur le client
               </CardTitle>
             </CardHeader>
             <CardContent className="grid gap-4">
@@ -411,7 +416,7 @@ function ConferenceReservationForm({
             <CardHeader>
               <CardTitle className="text-2xl text-amber-800 flex items-center">
                 <Projector className="h-6 w-6 mr-2" />
-                Détails de la conférence
+                  Détails de la conférence
               </CardTitle>
             </CardHeader>
             <CardContent className="grid gap-4">
@@ -443,7 +448,7 @@ function ConferenceReservationForm({
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="roomType" className="text-amber-700">
-                  Type de salle
+                 Type de salle
                 </Label>
                 <select
                   id="roomType"
@@ -600,21 +605,8 @@ function ConferenceReservationForm({
   );
 }
 
-// Composant principal avec Suspense ajouté
+// Composant principal
 export default function RoomReservationForm({
-  hotel = { id: "unknown", name: "Unknown Hotel" },
-}: {
-  hotel?: { id: string; name: string };
-}) {
-  return (
-    <Suspense fallback={<div>Chargement de la page de réservation...</div>}>
-      <RoomReservationFormContent hotel={hotel} />
-    </Suspense>
-  );
-}
-
-// Composant interne renommé pour éviter la collision
-function RoomReservationFormContent({
   hotel = { id: "unknown", name: "Unknown Hotel" },
 }: {
   hotel?: { id: string; name: string };
@@ -662,7 +654,6 @@ function RoomReservationFormContent({
   const { open, paymentStatus } = usePay();
 
   const isValidForm = isValid && selectedDates.length > 0 && guests >= 1;
-
   const onSubmit: SubmitHandler<IApartmentFormInput> = async (formData) => {
     setIsSubmitting(true);
     setData(formData);
@@ -700,6 +691,7 @@ function RoomReservationFormContent({
         if (!response.ok) {
           throw new Error("Failed to send email");
         }
+        // Vérifie si la route /recap existe ou redirige vers une page par défaut
         router.push(
           `/recap?type=reservation&name=${encodeURIComponent(
             formData.name
@@ -713,7 +705,7 @@ function RoomReservationFormContent({
               .join(",")
           )}&guests=${guests}&roomType=${roomType}&apartment=${encodeURIComponent(
             apartment || ""
-          )}`
+          )}` || "/"
         );
       }
     } catch (error) {
@@ -726,7 +718,6 @@ function RoomReservationFormContent({
       setIsSubmitting(false);
     }
   };
-
   useEffect(() => {
     if (guests && roomType && selectedDates.length > 0) {
       const amount = calculateAmount(guests, roomType, selectedDates);
@@ -804,6 +795,7 @@ function RoomReservationFormContent({
 
   const sortedDates = [...selectedDates].sort((a, b) => a.getTime() - b.getTime());
 
+  // Condition pour afficher le formulaire approprié
   if (apartment === "Salles de conf") {
     return <ConferenceReservationForm hotel={hotel} apartment={apartment} />;
   }
@@ -829,7 +821,7 @@ function RoomReservationFormContent({
             <CardContent className="grid gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="name" className="text-amber-700">
-                  Nom complet
+                 Nom complet
                 </Label>
                 <Input
                   id="name"
@@ -924,7 +916,7 @@ function RoomReservationFormContent({
               <div className="grid gap-2">
                 <Label className="text-amber-700 flex items-center">
                   <CalendarIcon className="h-5 w-5 mr-2" />
-                  Dates de la réservation
+                   Dates de la réservation
                 </Label>
                 <Calendar
                   id="reservationDates"
@@ -962,7 +954,7 @@ function RoomReservationFormContent({
             <div className="grid gap-2">
               <p className="text-amber-700 font-semibold flex items-center">
                 <Users className="h-5 w-5 mr-2" />
-                Nom du client
+              Nom du client
               </p>
               <p className="text-amber-600">{formData.name || "Non fourni"}</p>
             </div>
