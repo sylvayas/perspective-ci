@@ -11,7 +11,7 @@ function ReservationContent() {
   const apartment = searchParams.get('apartment') || '';
   const src = searchParams.get('src') || '';
 
-  return <ListSpaceCard apartment={decodeURIComponent(apartment)} src={decodeURIComponent(src)} />;
+  return <ListSpaceCard  />;
 }
 
 export default function ReservationPage() {
