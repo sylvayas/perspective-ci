@@ -89,7 +89,7 @@ function ApartmentDetails({ formRef }: { formRef: React.RefObject<HTMLFormElemen
   );
 }
 
-export default function RoomReservationForm({
+export default function ListSpaceCard ({
   hotel = { id: "unknown", name: "Unknown Hotel" },
 }: {
   hotel?: { id: string; name: string };
