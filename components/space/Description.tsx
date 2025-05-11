@@ -257,7 +257,7 @@ export default function DescriptionAllSpaces() {
                   <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4 flex flex-col gap-2">
                     <p className="text-white font-medium text-sm">{apartment}</p>
                     <Link
-                      href={`/reservation?apartment=${encodeURIComponent(apartment)}`}
+                      href={`/reservation/list-space-card`}
                       className={cn(
                         buttonVariants(),
                         "bg-perspectives_orange hover:bg-novis_yellow/90 text-black font-semibold py-2 px-4 rounded-lg w-fit flex items-center gap-2 text-sm opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transform translate-y-2 transition-all duration-300"

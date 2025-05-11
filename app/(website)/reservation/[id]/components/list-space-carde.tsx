@@ -1,7 +1,7 @@
 import SpaceCard from "@/components/ui/SpaceCard/space-card";
 import { datas } from "@/config/data";
 
-export default function ListSpaceCard() {
+export default function ListSpaceCarde() {
 
     return (
         <div className="container grid sm:grid-cols-2 md:grid-cols-3 py-8 xl:grid-cols-4 justify-center gap-8">

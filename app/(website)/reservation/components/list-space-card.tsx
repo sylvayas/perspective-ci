@@ -145,7 +145,9 @@ export default function ListSpaceCard({
 
   return (
     <section className="container min-h-[200px] py-14 bg-gradient-to-b from-amber-50 to-white">
-     <ApartmentDetails formRef={formRef} />
+      <Suspense fallback={<p>Chargement des détails...</p>}>
+        <ApartmentDetails formRef={formRef} />
+      </Suspense>
       {errorMessage && (
         <div className="max-w-5xl mx-auto mb-4 p-4 bg-red-100 text-red-700 rounded-lg">
           {errorMessage}
