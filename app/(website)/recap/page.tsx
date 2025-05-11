@@ -51,7 +51,7 @@ function RecapContent() {
 
         <div className="mt-6 text-center">
           <Link
-            href="/our_spaces/private_offices"
+            href={`/our_spaces/private_offices`}
             className="text-amber-600 hover:text-amber-800 underline transition-colors"
           >
             Retourner à la liste des espaces
