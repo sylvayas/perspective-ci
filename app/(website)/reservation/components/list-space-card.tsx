@@ -1,17 +1,16 @@
+// app/(website)/reservation/components/list-space-card.tsx
 'use client';
-import React, { useState, useRef, Suspense } from "react";
-import { Calendar as CalendarIcon, Users, Bed, Mail, Phone, Home } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Calendar } from "@/components/ui/calendar";
-import { useForm } from "react-hook-form";
-import { useRouter, useSearchParams } from "next/navigation";
-import Image from "next/image";
-import dayjs from "dayjs";
-import { mainProperties, otherProperties } from "@/components/space/Description";
+import React, { useState, useRef, useEffect } from 'react';
+import { Calendar as CalendarIcon, Users, Bed, Mail, Phone, Home } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Calendar } from '@/components/ui/calendar';
+import { useForm } from 'react-hook-form';
+import Image from 'next/image';
+import dayjs from 'dayjs';
 
-// Types simplifiés
+// Types
 interface IFormInput {
   name: string;
   email: string;
@@ -29,71 +28,39 @@ interface RoomType {
 }
 
 const roomTypes: RoomType[] = [
-  { id: "single", title: "Chambre simple", pricePerNight: 10000 },
-  { id: "double", title: "Chambre double", pricePerNight: 15000 },
-  { id: "suite", title: "Suite", pricePerNight: 25000 },
+  { id: 'single', title: 'Chambre simple', pricePerNight: 10000 },
+  { id: 'double', title: 'Chambre double', pricePerNight: 15000 },
+  { id: 'suite', title: 'Suite', pricePerNight: 25000 },
 ];
 
 const apartmentDescriptions: { [key: string]: string } = {
-  "Appartement B": "L'appartement B séduit par sa simplicité soignée et son atmosphère accueillante. Composé de 3 pièces, dont 2 chambres, il propose un cadre de vie équilibré, alliant confort et esthétique. Entièrement équipé et meublé, il offre un environnement convivial, idéal pour un séjour serein au cœur d'Abidjan.",
-  "Appartement B23": "Perché au 8e étage de l'immeuble Oumou Sidibé, au cœur de Marcory Zone 4, l'appartement B23 allie confort et sophistication. Composé de 4 pièces dont 3 chambres raffinées, il séduit par son ambiance chaleureuse et sa décoration élégante et épurée. Entièrement équipé, il offre à ses résidents un cadre de vie haut de gamme avec un accès à une salle de sport, une piscine et un parking. Depuis ses larges ouvertures, une vue magnifique sur Abidjan vient sublimer cet espace pensé pour une clientèle exigeante.",
-  "Appartement Pressing": "L'appartement Pressing se distingue par sa simplicité et son ambiance chaleureuse. De taille contenue, il offre un cadre pratique tout en étant doté d'une décoration élégante et sobre. Composé de 2 pièces, dont 1 chambre, il assure confort et fonctionnalité. Entièrement équipé, cet appartement est idéal pour des séjours courts. La qualité de ses équipements et son agencement optimisé vous garantissent une expérience à la fois pratique et élégante.",
-  "Appartement Prima": "Alliant espace et élégance, l'appartement Prima se distingue par son ambiance chaleureuse et sa décoration raffinée. Composé de 2 pièces contenu, il offre un cadre de vie agréable, pensé pour le confort et la sérénité. Entièrement équipé et doté d'un accès à un parking, il bénéficie d'un emplacement stratégique, idéal pour saisir chaque opportunité et profiter d'une grande liberté de mouvement au quotidien.",
-  "Appartement Soleil": "Niché au 1e étage de l'immeuble Soleil, cet appartement séduit par son volume généreux et son atmosphère raffinée. Ses larges baies vitrées laissent entrer une lumière naturelle abondante, mettant en valeur une décoration élégante et épurée. Avec ses 4 pièces, dont 3 chambres spacieuses et autonomes, il offre un cadre de vie harmonieux, propice à la sérénité. Entièrement équipé et bénéficiant d'un accès à un parking, il conjugue confort et praticité en plein cœur de Marcory Zone 4.",
-  "Complexe Carré Massina": "Situés dans le magnifique complexe Carré Massina, nos appartements de 3 et 4 pièces allient simplicité et chaleur. Avec une décoration élégante et sobre, chaque espace est pensé pour offrir à ses occupants confort et fonctionnalité. Entièrement équipés et meublés, ces appartements vous garantissent efficacité et praticité, tout en vous offrant un cadre de vie à la fois beau et raffiné. Idéalement situés à proximité de l'Aéroport Félix Houphouët-Boigny, ils sont parfaits pour les voyages d'affaires ou les déplacements, offrant un environnement calme et élégant.",
-  "Salles de conf": "Nosoue salles de conférence au Complexe Carré Massina sont idéales pour vos réunions professionnelles ou événements. Spacieuses et équipées, elles offrent un cadre élégant et fonctionnel, parfait pour des sessions productives.",
+  'Appartement B':
+    "L'appartement B séduit par sa simplicité soignée et son atmosphère accueillante. Composé de 3 pièces, dont 2 chambres, il propose un cadre de vie équilibré, alliant confort et esthétique. Entièrement équipé et meublé, il offre un environnement convivial, idéal pour un séjour serein au cœur d'Abidjan.",
+  'Appartement B23':
+    'Perché au 8e étage de l’immeuble Oumou Sidibé, au cœur de Marcory Zone 4, l’appartement B23 allie confort et sophistication. Composé de 4 pièces dont 3 chambres raffinées, il séduit par son ambiance chaleureuse et sa décoration élégante et épurée. Entièrement équipé, il offre à ses résidents un cadre de vie haut de gamme avec un accès à une salle de sport, une piscine et un parking. Depuis ses larges ouvertures, une vue magnifique sur Abidjan vient sublimer cet espace pensé pour une clientèle exigeante.',
+  'Appartement Pressing':
+    "L’appartement Pressing se distingue par sa simplicité et son ambiance chaleureuse. De taille contenue, il offre un cadre pratique tout en étant doté d’une décoration élégante et sobre. Composé de 2 pièces, dont 1 chambre, il assure confort et fonctionnalité. Entièrement équipé, cet appartement est idéal pour des séjours courts. La qualité de ses équipements et son agencement optimisé vous garantissent une expérience à la fois pratique et élégante.",
+  'Appartement Prima':
+    "Alliant espace et élégance, l’appartement Prima se distingue par son ambiance chaleureuse et sa décoration raffinée. Composé de 2 pièces contenu, il offre un cadre de vie agréable, pensé pour le confort et la sérénité. Entièrement équipé et doté d’un accès à un parking, il bénéficie d’un emplacement stratégique, idéal pour saisir chaque opportunité et profiter d’une grande liberté de mouvement au quotidien.",
+  'Appartement Soleil':
+    'Niché au 1e étage de l’immeuble Soleil, cet appartement séduit par son volume généreux et son atmosphère raffinée. Ses larges baies vitrées laissent entrer une lumière naturelle abondante, mettant en valeur une décoration élégante et épurée. Avec ses 4 pièces, dont 3 chambres spacieuses et autonomes, il offre un cadre de vie harmonieux, propice à la sérénité. Entièrement équipé et bénéficiant d’un accès à un parking, il conjugue confort et praticité en plein cœur de Marcory Zone 4.',
+  'Complexe Carré Massina':
+    'Situés dans le magnifique complexe Carré Massina, nos appartements de 3 et 4 pièces allient simplicité et chaleur. Avec une décoration élégante et sobre, chaque espace est pensé pour offrir à ses occupants confort et fonctionnalité. Entièrement équipés et meublés, ces appartements vous garantissent efficacité et praticité, tout en vous offrant un cadre de vie à la fois beau et raffiné. Idéalement situés à proximité de l’Aéroport Félix Houphouët-Boigny, ils sont parfaits pour les voyages d’affaires ou les déplacements, offrant un environnement calme et élégant.',
+  'Salles de conf':
+    'Nos salles de conférence au Complexe Carré Massina sont idéales pour vos réunions professionnelles ou événements. Spacieuses et équipées, elles offrent un cadre élégant et fonctionnel, parfait pour des sessions productives.',
 };
 
-function ApartmentDetails({ formRef }: { formRef: React.RefObject<HTMLFormElement> }) {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const apartment = searchParams.get("apartment");
-  const selectedApartmentImage = [...mainProperties, ...otherProperties].find(
-    (prop) => prop.apartment === apartment
-  );
-
-  React.useEffect(() => {
-    if (!apartment) {
-      router.push("/");
-    } else if (formRef.current) {
-      formRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [apartment, formRef, router]);
-
-  if (!apartment || !selectedApartmentImage) {
-    return null;
-  }
-
-  return (
-    <div className="max-w-5xl mx-auto mt-6 mb-8">
-      <div className="flex flex-col md:flex-row gap-6">
-        <div className="w-full md:w-1/2">
-          <Image
-            src={selectedApartmentImage.src}
-            alt={selectedApartmentImage.alt}
-            width={selectedApartmentImage.width}
-            height={selectedApartmentImage.height}
-            className="w-full h-[300px] object-cover rounded-lg shadow-md"
-            quality={85}
-          />
-        </div>
-        <div className="w-full md:w-1/2">
-          <h2 className="text-2xl font-semibold text-amber-800 mb-4">{apartment}</h2>
-          <p className="text-amber-600 leading-relaxed">
-            {apartmentDescriptions[apartment] || "Découvrez cet espace moderne conçu pour offrir une expérience exceptionnelle."}
-          </p>
-        </div>
-      </div>
-    </div>
-  );
+interface ListSpaceCardProps {
+  apartment: string;
+  src: string;
+  hotel?: { id: string; name: string };
 }
 
 export default function ListSpaceCard({
-  hotel = { id: "unknown", name: "Unknown Hotel" },
-}: {
-  hotel?: { id: string; name: string };
-}) {
-  const router = useRouter();
+  apartment,
+  src,
+  hotel = { id: 'unknown', name: 'Unknown Hotel' },
+}: ListSpaceCardProps) {
   const formRef = useRef<HTMLFormElement>(null);
   const [selectedDates, setSelectedDates] = useState<Date[]>([]);
   const [guests, setGuests] = useState<number>(1);
@@ -107,13 +74,12 @@ export default function ListSpaceCard({
     register,
     watch,
     formState: { errors },
-  } = useForm<IFormInput>({ mode: "onChange" });
+  } = useForm<IFormInput>({ mode: 'onChange' });
 
   const formData = watch();
-  const searchParams = useSearchParams();
-  const apartment = searchParams.get("apartment");
-  const isConferenceRoom = apartment === "Salles de conf";
+  const isConferenceRoom = apartment === 'Salles de conf';
 
+  // Calcul du montant
   const calculateAmount = (guestsOrParticipants: number, roomType: string, dates: Date[], duration?: number): number => {
     if (isConferenceRoom) {
       if (!guestsOrParticipants || !duration || duration <= 0) return 0;
@@ -130,12 +96,16 @@ export default function ListSpaceCard({
     }
   };
 
-  React.useEffect(() => {
+  // Hook useEffect déplacé avant toute condition
+  useEffect(() => {
     const amount = isConferenceRoom
-      ? calculateAmount(participants, "", [], duration)
+      ? calculateAmount(participants, '', [], duration)
       : calculateAmount(guests, roomType, selectedDates);
     setTotalAmount(amount);
   }, [guests, roomType, selectedDates, participants, duration, isConferenceRoom]);
+
+  // Validation
+  const isInvalid = !apartment || !src || !apartmentDescriptions[apartment];
 
   const handleCalendarSelect = (dates: Date[] | undefined) => {
     setSelectedDates(dates || []);
@@ -143,20 +113,47 @@ export default function ListSpaceCard({
 
   const sortedDates = [...selectedDates].sort((a, b) => a.getTime() - b.getTime());
 
+  // Rendu conditionnel après tous les Hooks
+  if (isInvalid) {
+    return (
+      <div className="container min-h-[200px] py-14 bg-gradient-to-b from-amber-50 to-white">
+        <div className="max-w-5xl mx-auto text-red-600">
+          Erreur : Appartement ou image non valide. Veuillez sélectionner un appartement valide.
+        </div>
+      </div>
+    );
+  }
+
   return (
     <section className="container min-h-[200px] py-14 bg-gradient-to-b from-amber-50 to-white">
-      <Suspense fallback={<p>Chargement des détails...</p>}>
-        <ApartmentDetails formRef={formRef} />
-      </Suspense>
+      <div className="max-w-5xl mx-auto mt-6 mb-8">
+        <div className="flex flex-col md:flex-row gap-6">
+          <div className="w-full md:w-1/2">
+            <Image
+              src={src}
+              alt={`Image de ${apartment}`}
+              width={800}
+              height={500}
+              className="w-full h-[300px] object-cover rounded-lg shadow-md"
+              quality={85}
+            />
+          </div>
+          <div className="w-full md:w-1/2">
+            <h2 className="text-2xl font-semibold text-amber-800 mb-4">{apartment}</h2>
+            <p className="text-amber-600 leading-relaxed">
+              {apartmentDescriptions[apartment] ||
+                'Découvrez cet espace moderne conçu pour offrir une expérience exceptionnelle.'}
+            </p>
+          </div>
+        </div>
+      </div>
+
       {errorMessage && (
         <div className="max-w-5xl mx-auto mb-4 p-4 bg-red-100 text-red-700 rounded-lg">
           {errorMessage}
         </div>
       )}
-      <form
-        ref={formRef}
-        className="grid gap-6 md:gap-8 lg:grid-cols-2 mt-6 max-w-5xl mx-auto min-h-[200px]"
-      >
+      <form ref={formRef} className="grid gap-6 md:gap-8 lg:grid-cols-2 mt-6 max-w-5xl mx-auto min-h-[200px]">
         <div className="space-y-6">
           <Card className="shadow-lg border-amber-200">
             <CardHeader>
@@ -167,42 +164,48 @@ export default function ListSpaceCard({
             </CardHeader>
             <CardContent className="grid gap-4">
               <div className="grid gap-2">
-                <Label htmlFor="name" className="text-amber-700">Nom complet</Label>
+                <Label htmlFor="name" className="text-amber-700">
+                  Nom complet
+                </Label>
                 <Input
                   id="name"
                   type="text"
                   className="border-amber-300 focus:ring-amber-500"
-                  {...register("name", { required: "Le nom est requis" })}
-                  aria-invalid={errors.name ? "true" : "false"}
+                  {...register('name', { required: 'Le nom est requis' })}
+                  aria-invalid={errors.name ? 'true' : 'false'}
                 />
                 {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="email" className="text-amber-700">Email</Label>
+                  <Label htmlFor="email" className="text-amber-700">
+                    Email
+                  </Label>
                   <Input
                     id="email"
                     type="email"
                     className="border-amber-300 focus:ring-amber-500"
-                    {...register("email", {
+                    {...register('email', {
                       required: "L'email est requis",
                       pattern: {
                         value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                        message: "Adresse email invalide",
+                        message: 'Adresse email invalide',
                       },
                     })}
-                    aria-invalid={errors.email ? "true" : "false"}
+                    aria-invalid={errors.email ? 'true' : 'false'}
                   />
                   {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="phone" className="text-amber-700">Téléphone</Label>
+                  <Label htmlFor="phone" className="text-amber-700">
+                    Téléphone
+                  </Label>
                   <Input
                     id="phone"
                     type="tel"
                     className="border-amber-300 focus:ring-amber-500"
-                    {...register("phone", { required: "Le téléphone est requis" })}
-                    aria-invalid={errors.phone ? "true" : "false"}
+                    {...register('phone', { required: 'Le téléphone est requis' })}
+                    aria-invalid={errors.phone ? 'true' : 'false'}
                   />
                   {errors.phone && <p className="text-red-500 text-sm">{errors.phone.message}</p>}
                 </div>
@@ -214,14 +217,16 @@ export default function ListSpaceCard({
             <CardHeader>
               <CardTitle className="text-2xl text-amber-800 flex items-center">
                 <Bed className="h-6 w-6 mr-2" />
-                Détails de la {isConferenceRoom ? "réservation de salle" : "réservation"}
+                Détails de la {isConferenceRoom ? 'réservation de salle' : 'réservation'}
               </CardTitle>
             </CardHeader>
             <CardContent className="grid gap-4">
               {isConferenceRoom ? (
                 <>
                   <div className="grid gap-2">
-                    <Label htmlFor="participants" className="text-amber-700">Nombre de participants</Label>
+                    <Label htmlFor="participants" className="text-amber-700">
+                      Nombre de participants
+                    </Label>
                     <Input
                       id="participants"
                       type="number"
@@ -232,7 +237,9 @@ export default function ListSpaceCard({
                     />
                   </div>
                   <div className="grid gap-2">
-                    <Label htmlFor="duration" className="text-amber-700">Durée (en heures)</Label>
+                    <Label htmlFor="duration" className="text-amber-700">
+                      Durée (en heures)
+                    </Label>
                     <Input
                       id="duration"
                       type="number"
@@ -246,7 +253,9 @@ export default function ListSpaceCard({
               ) : (
                 <>
                   <div className="grid gap-2">
-                    <Label htmlFor="guests" className="text-amber-700">Nombre de personnes</Label>
+                    <Label htmlFor="guests" className="text-amber-700">
+                      Nombre de personnes
+                    </Label>
                     <Input
                       id="guests"
                       type="number"
@@ -257,7 +266,9 @@ export default function ListSpaceCard({
                     />
                   </div>
                   <div className="grid gap-2">
-                    <Label htmlFor="roomType" className="text-amber-700">Type de chambre</Label>
+                    <Label htmlFor="roomType" className="text-amber-700">
+                      Type de chambre
+                    </Label>
                     <select
                       id="roomType"
                       value={roomType}
@@ -288,8 +299,8 @@ export default function ListSpaceCard({
                     />
                     {selectedDates.length > 0 ? (
                       <p className="text-sm text-amber-600">
-                        Dates sélectionnées :{" "}
-                        {sortedDates.map((date) => dayjs(date).format("YYYY-MM-DD")).join(" - ")}
+                        Dates sélectionnées :{' '}
+                        {sortedDates.map((date) => dayjs(date).format('YYYY-MM-DD')).join(' - ')}
                       </p>
                     ) : (
                       <p className="text-sm text-amber-600">Aucune date sélectionnée</p>
@@ -305,7 +316,7 @@ export default function ListSpaceCard({
           <CardHeader>
             <CardTitle className="text-2xl text-amber-800 flex items-center">
               <Home className="h-6 w-6 mr-2" />
-              Résumé de la {isConferenceRoom ? "réservation de salle" : "réservation"}
+              Résumé de la {isConferenceRoom ? 'réservation de salle' : 'réservation'}
             </CardTitle>
           </CardHeader>
           <CardContent className="grid gap-4">
@@ -314,21 +325,25 @@ export default function ListSpaceCard({
                 <Users className="h-5 w-5 mr-2" />
                 Nom du client
               </p>
-              <p className="text-amber-600">{formData.name || "Non fourni"}</p>
+              <p className="text-amber-600">{formData.name || 'Non fourni'}</p>
             </div>
             <div className="grid gap-2">
               <p className="text-amber-700 font-semibold flex items-center">
                 <Mail className="h-5 w-5 mr-2" />
                 Email
               </p>
-              <p className="text-amber-600">{formData.email || "Non fourni"}</p>
+              <p className="text-amber-600">{formData.email || 'Non fourni'}</p>
             </div>
             <div className="grid gap-2">
               <p className="text-amber-700 font-semibold flex items-center">
                 <Phone className="h-5 w-5 mr-2" />
                 Téléphone
               </p>
-              <p className="text-amber-600">{formData.phone || "Non fourni"}</p>
+              <p className="text-amber-600">{formData.phone || 'Non fourni'}</p>
+            </div>
+            <div className="grid gap-2">
+              <p className="text-amber-700 font-semibold">Appartement</p>
+              <p className="text-amber-600">{apartment}</p>
             </div>
             {isConferenceRoom ? (
               <>
@@ -341,7 +356,9 @@ export default function ListSpaceCard({
                 </div>
                 <div className="grid gap-2">
                   <p className="text-amber-700 font-semibold">Durée</p>
-                  <p className="text-amber-600">{duration} heure{duration > 1 ? "s" : ""}</p>
+                  <p className="text-amber-600">
+                    {duration} heure{duration > 1 ? 's' : ''}
+                  </p>
                 </div>
               </>
             ) : (
@@ -353,8 +370,8 @@ export default function ListSpaceCard({
                   </p>
                   <p className="text-amber-600">
                     {sortedDates.length > 0
-                      ? sortedDates.map((date) => dayjs(date).format("YYYY-MM-DD")).join(", ")
-                      : "Aucune date sélectionnée"}
+                      ? sortedDates.map((date) => dayjs(date).format('YYYY-MM-DD')).join(', ')
+                      : 'Aucune date sélectionnée'}
                   </p>
                 </div>
                 <div className="grid gap-2">
@@ -370,7 +387,7 @@ export default function ListSpaceCard({
                     Type de chambre
                   </p>
                   <p className="text-amber-600">
-                    {roomTypes.find((r) => r.id === roomType)?.title || "Non fourni"}
+                    {roomTypes.find((r) => r.id === roomType)?.title || 'Non fourni'}
                   </p>
                 </div>
               </>
@@ -379,8 +396,12 @@ export default function ListSpaceCard({
               <p className="text-amber-700 font-semibold">Total du prix</p>
               <p className="text-lg font-bold text-amber-800">
                 {totalAmount > 0
-                  ? `${totalAmount} FCFA ${isConferenceRoom ? `(${duration} heure${duration > 1 ? "s" : ""})` : `(${sortedDates.length} nuit${sortedDates.length > 1 ? "s" : ""})`}`
-                  : "Non calculé"}
+                  ? `${totalAmount} FCFA ${
+                      isConferenceRoom
+                        ? `(${duration} heure${duration > 1 ? 's' : ''})`
+                        : `(${sortedDates.length} nuit${sortedDates.length > 1 ? 's' : ''})`
+                    }`
+                  : 'Non calculé'}
               </p>
             </div>
           </CardContent>

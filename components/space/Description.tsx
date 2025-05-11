@@ -1,19 +1,19 @@
+// app/(website)/space/Description.tsx
 "use client";
 
-import TitleSection from "@/components/title-section";
 import React, { useState } from "react";
 import { BorderBeam } from "@/components/magicui/border-beam";
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
-import ServicesCarousel from "../website/Services/services-carousel";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { Icons } from "../icons";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
+// Interface et données (mainProperties, otherProperties) inchangées
 interface Property {
   src: string;
   alt: string;
@@ -21,8 +21,6 @@ interface Property {
   height: number;
   apartment: string;
 }
-
-// Propriétés principales
 export const mainProperties: Property[] = [
   { src: "/images/Apparts/Appart B/Chambre 2.png", alt: "Chambre 2 - Appartement B", width: 800, height: 500, apartment: "Appartement B" },
   { src: "/images/Apparts/Appart B/Chambre 1.png", alt: "Chambre 1 - Appartement B", width: 800, height: 500, apartment: "Appartement B" },
@@ -58,7 +56,8 @@ export const otherProperties: Property[] = [
   { src: "/images/Apparts/Complexe Carré Massina/Salles de conf/3/IMG_0881.DNG.png", alt: "Espace extérieur - Salles de conf", width: 800, height: 500, apartment: "Salles de conf" },
 ];
 
-// Grouper les propriétés par appartement
+
+// Grouper les propriétés (inchangé)
 const groupPropertiesByApartment = (properties: Property[]) => {
   const grouped: { [key: string]: Property[] } = {};
   properties.forEach((property) => {
@@ -94,41 +93,38 @@ export default function DescriptionAllSpaces() {
 
   return (
     <>
-      <section className="container min-h-[400px] py-16 relative bg-gray-50" ref={sectionRef}>
-        <div className="relative flex flex-col md:flex-row gap-8 items-center py-8 px-4 mx-auto max-w-screen-xl sm:py-16 lg:px-6">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={sectionInView ? { opacity: 1, scale: 1 } : {}}
-            transition={{ duration: 0.8 }}
-            className="relative rounded-lg overflow-hidden shadow-lg w-full md:w-1/2"
-          >
-            <Image
-              className="w-full h-full object-cover"
-              src="/images/immobilier/maison_immobilier.jpg"
-              alt="Vue d'une propriété immobilière"
-              width={900}
-              height={600}
-              quality={100}
-              priority
-            />
-            <BorderBeam className="z-10" />
-          </motion.div>
+  <section className="container min-h-[400px] py-16 relative bg-gray-50" ref={sectionRef}>
+        <div className="relative flex flex-col md:flex-row gap-8 items-center py-8 px-4 mx-auto max-w-screen-xl sm:py-16 lg:px-6">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={sectionInView ? { opacity: 1, scale: 1 } : {}}
+            transition={{ duration: 0.8 }}
+            className="relative rounded-lg overflow-hidden shadow-lg w-full md:w-1/2"
+          >
+            <Image
+              className="w-full h-full object-cover"
+              src="/images/immobilier/maison_immobilier.jpg"
+              alt="Vue d'une propriété immobilière"
+              width={900}
+              height={600}
+              quality={100}
+              priority
+            />
+            <BorderBeam className="z-10" />
+          </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={sectionInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="mt-8 md:mt-0 flex flex-col justify-center w-full md:w-1/2"
-          >
-            <p className="mb-6 text-justify text-gray-600 md:text-lg leading-relaxed">
-              Nous proposons une gamme complète de services en immobilier et logistique : intermédiation pour l’achat
-              et la vente, location de biens meublés ou non, gestion immobilière, conseil en projets de construction, et
-              fourniture de matériel. Nos solutions incluent également la location de hangars, plateformes, et
-              entrepôts, adaptées à vos besoins logistiques.
-            </p>
-          </motion.div>
-        </div>
-      </section>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={sectionInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="mt-8 md:mt-0 flex flex-col justify-center w-full md:w-1/2"
+          >
+ <p className="mb-6 text-justify text-gray-600 md:text-lg leading-relaxed"> Nous proposons une gamme complète de services en immobilier et logistique : intermédiation pour l&apos;achat
+ et la vente, location de biens meublés ou non, gestion immobilière, conseil en projets de construction, et fourniture de matériel. Nos solutions incluent également la location de hangars, plateformes, etentrepôts, adaptées à vos besoins logistiques.
+            </p>
+          </motion.div>
+        </div>
+      </section>
 
       <section id="showcase" className="container px-4 md:px-8 py-16" ref={showcaseRef}>
         <motion.h2
@@ -197,7 +193,13 @@ export default function DescriptionAllSpaces() {
                         "max-w-32 md:max-w-48 gap-2 overflow-hidden whitespace-pre",
                         "group relative w-full justify-center gap-2 rounded-md transition-all opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transform translate-y-2 duration-300 ease-out hover:ring-2 hover:ring-primary hover:ring-offset-2"
                       )}
-                      href={`/reservation?apartment=${encodeURIComponent(apartment)}`}
+                      href={{
+                        pathname: "/reservation",
+                        query: {
+                          apartment: encodeURIComponent(apartment),
+                          src: encodeURIComponent(images[sliderIndices[apartment] || 0].src),
+                        },
+                      }}
                     >
                       <span className="absolute right-0 -mt-12 h-32 w-8 translate-x-12 rotate-12 bg-white opacity-10 transition-all duration-1000 ease-out group-hover:-translate-x-40" />
                       <div className="flex items-center">
@@ -257,7 +259,13 @@ export default function DescriptionAllSpaces() {
                   <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4 flex flex-col gap-2">
                     <p className="text-white font-medium text-sm">{apartment}</p>
                     <Link
-                      href={`/reservation/list-space-card`}
+                      href={{
+                        pathname: "/reservation",
+                        query: {
+                          apartment: encodeURIComponent(apartment),
+                          src: encodeURIComponent(images[sliderIndices[apartment] || 0].src),
+                        },
+                      }}
                       className={cn(
                         buttonVariants(),
                         "bg-perspectives_orange hover:bg-novis_yellow/90 text-black font-semibold py-2 px-4 rounded-lg w-fit flex items-center gap-2 text-sm opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transform translate-y-2 transition-all duration-300"
