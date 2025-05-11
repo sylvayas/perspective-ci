@@ -1,12 +1,11 @@
 'use client';
 import React, { useState, useRef, Suspense } from "react";
-import { Calendar as CalendarIcon, Users, Bed, Loader2, Mail, Phone, Home } from "lucide-react";
+import { Calendar as CalendarIcon, Users, Bed, Mail, Phone, Home } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Calendar } from "@/components/ui/calendar";
-import { useForm, SubmitHandler } from "react-hook-form";
-import { Button } from "@/components/ui/button";
+import { useForm } from "react-hook-form";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import dayjs from "dayjs";
@@ -17,10 +16,10 @@ interface IFormInput {
   name: string;
   email: string;
   phone: string;
-  guests?: number; // Pour les appartements
-  participants?: number; // Pour les salles de conférence
-  roomType?: string; // Pour les appartements
-  duration?: number; // Pour les salles de conférence
+  guests?: number;
+  participants?: number;
+  roomType?: string;
+  duration?: number;
 }
 
 interface RoomType {
@@ -42,7 +41,7 @@ const apartmentDescriptions: { [key: string]: string } = {
   "Appartement Prima": "Alliant espace et élégance, l'appartement Prima se distingue par son ambiance chaleureuse et sa décoration raffinée. Composé de 2 pièces contenu, il offre un cadre de vie agréable, pensé pour le confort et la sérénité. Entièrement équipé et doté d'un accès à un parking, il bénéficie d'un emplacement stratégique, idéal pour saisir chaque opportunité et profiter d'une grande liberté de mouvement au quotidien.",
   "Appartement Soleil": "Niché au 1e étage de l'immeuble Soleil, cet appartement séduit par son volume généreux et son atmosphère raffinée. Ses larges baies vitrées laissent entrer une lumière naturelle abondante, mettant en valeur une décoration élégante et épurée. Avec ses 4 pièces, dont 3 chambres spacieuses et autonomes, il offre un cadre de vie harmonieux, propice à la sérénité. Entièrement équipé et bénéficiant d'un accès à un parking, il conjugue confort et praticité en plein cœur de Marcory Zone 4.",
   "Complexe Carré Massina": "Situés dans le magnifique complexe Carré Massina, nos appartements de 3 et 4 pièces allient simplicité et chaleur. Avec une décoration élégante et sobre, chaque espace est pensé pour offrir à ses occupants confort et fonctionnalité. Entièrement équipés et meublés, ces appartements vous garantissent efficacité et praticité, tout en vous offrant un cadre de vie à la fois beau et raffiné. Idéalement situés à proximité de l'Aéroport Félix Houphouët-Boigny, ils sont parfaits pour les voyages d'affaires ou les déplacements, offrant un environnement calme et élégant.",
-  "Salles de conf": "Nos salles de conférence au Complexe Carré Massina sont idéales pour vos réunions professionnelles ou événements. Spacieuses et équipées, elles offrent un cadre élégant et fonctionnel, parfait pour des sessions productives.",
+  "Salles de conf": "Nosoue salles de conférence au Complexe Carré Massina sont idéales pour vos réunions professionnelles ou événements. Spacieuses et équipées, elles offrent un cadre élégant et fonctionnel, parfait pour des sessions productives.",
 };
 
 function ApartmentDetails({ formRef }: { formRef: React.RefObject<HTMLFormElement> }) {
@@ -89,7 +88,7 @@ function ApartmentDetails({ formRef }: { formRef: React.RefObject<HTMLFormElemen
   );
 }
 
-export default function ListSpaceCard ({
+export default function ListSpaceCard({
   hotel = { id: "unknown", name: "Unknown Hotel" },
 }: {
   hotel?: { id: string; name: string };
@@ -98,18 +97,16 @@ export default function ListSpaceCard ({
   const formRef = useRef<HTMLFormElement>(null);
   const [selectedDates, setSelectedDates] = useState<Date[]>([]);
   const [guests, setGuests] = useState<number>(1);
-  const [participants, setParticipants] = useState<number>(1); // Pour les salles de conférence
+  const [participants, setParticipants] = useState<number>(1);
   const [roomType, setRoomType] = useState<string>(roomTypes[0].id);
-  const [duration, setDuration] = useState<number>(1); // Pour les salles de conférence
+  const [duration, setDuration] = useState<number>(1);
   const [totalAmount, setTotalAmount] = useState<number>(0);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const {
     register,
-    handleSubmit,
     watch,
-    formState: { errors, isValid },
+    formState: { errors },
   } = useForm<IFormInput>({ mode: "onChange" });
 
   const formData = watch();
@@ -119,11 +116,9 @@ export default function ListSpaceCard ({
 
   const calculateAmount = (guestsOrParticipants: number, roomType: string, dates: Date[], duration?: number): number => {
     if (isConferenceRoom) {
-      // Calcul simplifié pour les salles de conférence
       if (!guestsOrParticipants || !duration || duration <= 0) return 0;
-      return 5000 * guestsOrParticipants * duration; // Exemple : 5000 FCFA par participant par heure
+      return 5000 * guestsOrParticipants * duration;
     } else {
-      // Calcul pour les appartements
       if (!guestsOrParticipants || !roomType || !dates || dates.length === 0) return 0;
       const qty = guestsOrParticipants || 0;
       if (qty <= 0) return 0;
@@ -142,45 +137,15 @@ export default function ListSpaceCard ({
     setTotalAmount(amount);
   }, [guests, roomType, selectedDates, participants, duration, isConferenceRoom]);
 
-  const onSubmit: SubmitHandler<IFormInput> = async (formData) => {
-    setIsSubmitting(true);
-    setErrorMessage(null);
-    try {
-      const params = new URLSearchParams({
-        type: isConferenceRoom ? "conference" : "reservation",
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        hotelId: hotel.id,
-        dates: selectedDates.map((date) => dayjs(date).format("YYYY-MM-DD")).join(","),
-        guests: isConferenceRoom ? participants.toString() : guests.toString(),
-        roomType: isConferenceRoom ? "" : roomType,
-        duration: isConferenceRoom ? duration.toString() : "",
-        amount: totalAmount.toString(),
-        apartment: apartment || "",
-      }).toString();
-
-      router.push(`/recap?${params}`);
-    } catch (error) {
-      console.error("Erreur lors de la soumission :", error);
-      setErrorMessage("Une erreur s'est produite lors de la soumission. Veuillez réessayer.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
   const handleCalendarSelect = (dates: Date[] | undefined) => {
     setSelectedDates(dates || []);
   };
 
   const sortedDates = [...selectedDates].sort((a, b) => a.getTime() - b.getTime());
-  const isValidForm = isValid && (isConferenceRoom ? duration >= 1 : selectedDates.length > 0 && guests >= 1);
 
   return (
     <section className="container min-h-[200px] py-14 bg-gradient-to-b from-amber-50 to-white">
-      <Suspense fallback={<div>Chargement...</div>}>
-        <ApartmentDetails formRef={formRef} />
-      </Suspense>
+     <ApartmentDetails formRef={formRef} />
       {errorMessage && (
         <div className="max-w-5xl mx-auto mb-4 p-4 bg-red-100 text-red-700 rounded-lg">
           {errorMessage}
@@ -188,7 +153,6 @@ export default function ListSpaceCard ({
       )}
       <form
         ref={formRef}
-        onSubmit={handleSubmit(onSubmit)}
         className="grid gap-6 md:gap-8 lg:grid-cols-2 mt-6 max-w-5xl mx-auto min-h-[200px]"
       >
         <div className="space-y-6">
@@ -417,20 +381,6 @@ export default function ListSpaceCard ({
                   : "Non calculé"}
               </p>
             </div>
-            <Button
-              type="submit"
-              disabled={!isValidForm || isSubmitting}
-              className="mt-4 bg-amber-600 hover:bg-amber-700 text-white gap-2 w-full"
-            >
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  <span>En cours...</span>
-                </>
-              ) : (
-                <span>Confirmer la {isConferenceRoom ? "demande" : "réservation"}</span>
-              )}
-            </Button>
           </CardContent>
         </Card>
       </form>
